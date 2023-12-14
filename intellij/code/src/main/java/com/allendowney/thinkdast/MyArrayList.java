@@ -1,10 +1,6 @@
 package com.allendowney.thinkdast;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * @author downey
@@ -44,8 +40,15 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public boolean add(T element) {
-		// TODO: FILL THIS IN!
-		return false;
+		if (size >= array.length) {
+			// 큰 배열을 만들고 요소들을 복사
+			T[] bigger = (T[]) new Object[array.length * 2];
+			System.arraycopy(array, 0, bigger, 0, array.length);
+			array = bigger;
+		}
+		array[size] = element;
+		size += 1;
+		return true;
 	}
 
 	@Override
@@ -110,7 +113,14 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public int indexOf(Object target) {
-		// TODO: FILL THIS IN!
+		// 이거 타입 체크는 안하나? 아무리 Override 메서드라지만 T만 가지게 체크해야 하는거 아님? -> 근데 테스트에 없음
+		// target이 Object 임 + null이 들어올 수 있음
+
+		for(int i = 0; i < size; i++) {
+			if (Objects.equals(target, array[i])) {
+				return i;
+			}
+		}
 		return -1;
 	}
 
@@ -181,8 +191,17 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		// TODO: FILL THIS IN!
-		return null;
+		// 1,2,3,4,5,6 - size:6, remove:2
+		// 1,2,4,5,6
+		// -> remove할 idx+1부터 i < size 될 때까지 i를 좌측으로 이동
+		// -> -> 순서대로 우측 요소가 좌측 요소를 덮어씌워야 함
+		// -> for 안에서 i+1 처럼 접근하니까 size-1 미만에서만 동작하게 조건
+		T removedElement = get(index);
+		for (int i = index; i < size-1; i++) {
+			array[i] = array[i+1];
+		}
+		size--;
+		return removedElement;
 	}
 
 	@Override
@@ -201,8 +220,10 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T set(int index, T element) {
-		// TODO: FILL THIS IN!
-		return null;
+		// 책 힌트 : 인덱스를 검사하는 코드의 반복을 피해야 합니다.
+		T beforeElement = get(index);
+		array[index] = element;
+		return beforeElement;
 	}
 
 	@Override
