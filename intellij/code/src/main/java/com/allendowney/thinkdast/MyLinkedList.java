@@ -1,5 +1,4 @@
 /**
- * 
  */
 package com.allendowney.thinkdast;
 
@@ -8,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 
 /**
  * @author downey
@@ -82,7 +82,13 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public void add(int index, E element) {
-		//TODO: FILL THIS IN!
+		if (index < 1) {
+            head = new Node(element, head);
+		} else {
+			Node prev = getNode(index-1);
+			prev.next = new Node(element, prev.next);
+		}
+		size++;
 	}
 
 	@Override
@@ -143,7 +149,13 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public int indexOf(Object target) {
-		//TODO: FILL THIS IN!
+		Node node = head;
+		for(int i=0; i<size; i++) {
+			if(Objects.equals(target, node.data)) {
+				return i;
+			}
+			node = node.next;
+		}
 		return -1;
 	}
 
@@ -206,11 +218,38 @@ public class MyLinkedList<E> implements List<E> {
 		return true;
 	}
 
+    @Override
+    public E remove(int index) {
+		E element = get(index);
+		if (index == 0) {
+			head = head.next;
+		} else {
+			Node node = getNode(index-1);
+			node.next = node.next.next; }
+		size--;
+		return element;
+    }
+
+	/*
+	내가 짠 코드인데, 이러면 getNode(index-1) 만 해서 index 유효성 검사가 안됨
+	책에서 쓴 코드는 2n이긴 하지만, 더 직관적인 편
 	@Override
-	public E remove(int index) {
-		//TODO: FILL THIS IN!
-		return null;
-	}
+    public E remove(int index) {
+		Node node = null;
+        if (index < 1) {
+            node = head;
+            head = head.next;
+        } else {
+            Node prev = getNode(index-1);
+            node = prev.next;
+            if (node.next != null) {
+                prev.next = node.next;
+            }
+        }
+        size--;
+        return node.data;
+    }
+	 */
 
 	@Override
 	public boolean removeAll(Collection<?> collection) {
