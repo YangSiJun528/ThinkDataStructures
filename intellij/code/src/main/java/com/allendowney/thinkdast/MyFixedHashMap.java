@@ -31,6 +31,8 @@ public class MyFixedHashMap<K, V> extends MyHashMap<K, V> implements Map<K, V> {
 		V oldValue = map.put(key, value);
 		size += map.size();
 
+		// n개의 엔트리와 k개의 하위 맵이 있을 때,
+		// n/k > FACTOR. 즉, 하위맵 당 엔트리의 개수가 임계치를 초과하므로 rehash 수행
 		if (size() > maps.size() * FACTOR) {
 			size = 0;
 			rehash();
