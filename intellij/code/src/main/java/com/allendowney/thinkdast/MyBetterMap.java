@@ -1,11 +1,6 @@
 package com.allendowney.thinkdast;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of a Map using a collection of MyLinearMap, and
@@ -63,14 +58,20 @@ public class MyBetterMap<K, V> implements Map<K, V> {
 	@Override
 	public boolean containsKey(Object target) {
 		// to find a key, we only have to search one map
-		// TODO: FILL THIS IN!
-		return false;
+		//return chooseMap(target) != null? chooseMap(target).containsKey(target): null;
+		return chooseMap(target).containsKey(target);
 	}
 
 	@Override
 	public boolean containsValue(Object target) {
 		// to find a value, we have to search all map
-		// TODO: FILL THIS IN!
+		for (MyLinearMap<K, V> map : maps) {
+			for (V value : map.values()) {
+				if (Objects.equals(value, target)) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
