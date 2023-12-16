@@ -2,9 +2,16 @@ package com.allendowney.thinkdast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 public class WikiPhilosophy {
@@ -40,6 +47,33 @@ public class WikiPhilosophy {
      * @throws IOException
      */
     public static void testConjecture(String destination, String source, int limit) throws IOException {
-        // TODO: FILL THIS IN!
+        // download and parse the document
+        String url = source;
+
+        for (int i = 0; i<limit; i++){
+
+//            System.out.println("URL : "+url);
+//            System.out.println("Visited : "+visited);
+
+            if (visited.contains(url)) {
+                throw new RuntimeException("FAIL : visited url");
+            }
+            visited.add(url);
+            Element e = getFirstValidLink(url);
+            if (e == null) {
+                throw new RuntimeException("FAIL : no link");
+            }
+            url = "https://en.wikipedia.org" + e.attr("href");
+            if(url.equals(destination)) {
+                System.out.println("SUCCESS : find destination");
+                break;
+            }
+        }
+    }
+
+    public static Element getFirstValidLink(String url) throws IOException {
+        Elements paragraphs = wf.fetchWikipedia(url);
+        WikiParser wp = new WikiParser(paragraphs);
+        return wp.findFirstLink();
     }
 }
