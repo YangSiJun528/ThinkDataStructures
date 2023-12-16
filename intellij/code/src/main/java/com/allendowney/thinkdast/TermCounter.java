@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
@@ -36,8 +37,9 @@ public class TermCounter {
 	 * @return
 	 */
 	public int size() {
-		// TODO: FILL THIS IN!
-		return 0;
+		AtomicInteger cnt = new AtomicInteger();
+		map.forEach((k, v) -> cnt.set(v + cnt.get()));
+		return cnt.get();
 	}
 
 	/**
