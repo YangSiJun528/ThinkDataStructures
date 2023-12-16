@@ -51,10 +51,8 @@ public class WikiPhilosophy {
         String url = source;
 
         for (int i = 0; i<limit; i++){
-
 //            System.out.println("URL : "+url);
 //            System.out.println("Visited : "+visited);
-
             if (visited.contains(url)) {
                 throw new RuntimeException("FAIL : visited url");
             }
