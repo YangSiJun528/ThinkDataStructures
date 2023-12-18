@@ -3,13 +3,7 @@
  */
 package com.allendowney.thinkdast;
 
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of a Map using a binary search tree.
@@ -71,7 +65,16 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		@SuppressWarnings("unchecked")
 		Comparable<? super K> k = (Comparable<? super K>) target;
 
-		// TODO: FILL THIS IN!
+		Node node = root;
+		while (node != null) {
+            if (k.compareTo(node.key) > 0) {
+				node = node.right;
+            } else if (k.compareTo(node.key) < 0) {
+				node = node.left;
+			} else {
+				return node;
+			}
+        }
 		return null;
 	}
 
@@ -95,8 +98,13 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	}
 
 	private boolean containsValueHelper(Node node, Object target) {
-		// TODO: FILL THIS IN!
-		return false;
+		if (node == null) {
+			return false;
+		}
+		if (Objects.equals(node.value, target)) {
+			return true;
+		}
+		return containsValueHelper(node.right, target) || containsValueHelper(node.left, target);
 	}
 
 	@Override
@@ -121,7 +129,17 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		Set<K> set = new LinkedHashSet<K>();
-		// TODO: FILL THIS IN!
+		return keySetHelper(root, set);
+	}
+
+	private Set<K> keySetHelper(Node node, Set<K> set) {
+		if (node == null) {
+			return set;
+		}
+		keySetHelper(node.left, set);
+		//inorder dfs 방식으로 구현
+		set.add(node.key);
+		keySetHelper(node.right, set);
 		return set;
 	}
 
@@ -139,9 +157,65 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	}
 
 	private V putHelper(Node node, K key, V value) {
-		// TODO: FILL THIS IN!
-		return null;
+		Comparable<? super K> k = (Comparable<? super K>) key;
+
+		int cmp = k.compareTo(node.key);
+
+			if (cmp > 0) {
+				if (node.right == null) {
+					node.right = new Node(key, value);
+					size++;
+					return null;
+				} else {
+					putHelper(node.right, key, value);
+				}
+			}
+
+			if (cmp < 0) {
+				if (node.left == null) {
+					node.left = new Node(key, value);
+					size++;
+					return null;
+				} else {
+					putHelper(node.left, key, value);
+				}
+			}
+
+			V oldVal = node.value;
+			node.value = value;
+			return oldVal;
 	}
+
+	/*
+	공식 코드는 재귀 사용해서 품
+		private V putHelper(Node node, K key, V value) {
+		Comparable<? super K> k = (Comparable<? super K>) key;
+
+		while (true) {
+			if (k.compareTo(node.key) > 0) {
+				if (node.right == null) {
+					node.right = new Node(key, value);
+					size++;
+					return null;
+				} else {
+					node = node.right;
+				}
+			} else if (k.compareTo(node.key) < 0) {
+				if (node.left == null) {
+					node.left = new Node(key, value);
+					size++;
+					return null;
+				} else {
+					node = node.left;
+				}
+			} else {
+				V oldVal = node.value;
+				node.value = value;
+				return oldVal;
+			}
+		}
+	}
+	 */
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> map) {
@@ -150,10 +224,21 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		}
 	}
 
+	// 삭제하려는 node의 자식이 존재하는 경우, 오른쪽 서브트리에서 가장 작은 노드와 대체한다.
+	// 만약 오른쪽 서브트리가 없는 경우, 왼쪽 서브트리에서 가장 큰 노드와 대체한다.
+	// 대체한 후, 대체한(삭제하려는 node)를 null로 변경하여 삭제한다.
+
+	/*
+	제거 수행 과정
+	노드 찾기: 먼저 제거하려는 노드를 찾습니다. 이 작업은 트리를 탐색하여 수행됩니다.
+	노드 제거: 찾은 노드를 제거합니다. 이 노드가 리프 노드(자식이 없는 노드)인 경우, 그냥 제거하면 됩니다. 그렇지 않은 경우, 재배치된 자식 노드가 원래 노드의 위치를 대체하게 됩니다. (자식 노드 재배치 과정에서 덮어씌워짐)
+	자식 노드 재배치: 제거하려는 노드가 자식 노드를 가지고 있는 경우, 이 자식 노드들을 재배치해야 합니다. 일반적으로, 오른쪽 서브트리에서 가장 작은 노드(또는 왼쪽 서브트리에서 가장 큰 노드)를 찾아 제거된 노드의 위치로 옮깁니다.
+	 */
 	@Override
 	public V remove(Object key) {
 		// OPTIONAL TODO: FILL THIS IN!
 		throw new UnsupportedOperationException();
+		// 찾아봤는데, 이해잘 안가서 일단 스킵함
 	}
 
 	@Override
